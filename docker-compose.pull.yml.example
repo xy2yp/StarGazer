@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  stargazer:
+    # 使用预构建镜像
+    image: xy2yp/stargazer:latest
+    container_name: stargazer
+    restart: unless-stopped
+    ports:
+      # 格式: <主机端口>:<容器端口>
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    environment:
+      # --- 必填项 ---
+
+      # GitHub OAuth App 配置
+      # 在 GitHub -> Settings -> Developer settings -> OAuth Apps 中创建
+      # 回调 URL 必须设置为: http://<你的服务器IP或域名>:<主机端口>/auth/callback
+      - GITHUB_CLIENT_ID=<YOUR_GITHUB_CLIENT_ID>
+      - GITHUB_CLIENT_SECRET=<YOUR_GITHUB_CLIENT_SECRET>
+
+      # 用于加密会话和敏感数据的密钥
+      # 必须是一个安全的随机字符串，建议不低于32位，可使用 `openssl rand -hex 32` 生成
+      - SECRET_KEY=<YOUR_SECURE_RANDOM_STRING>
+
+      # --- 可选项 ---
+
+      # 调试模式 (生产环境应设为 False)
+      - DEBUG=False
+
+      # Cookie 有效期（天），默认为 30
+      - COOKIE_MAX_AGE_DAYS=30
+
+      # 如果应用部署在反向代理之后，请设置你的域名
+      # 例如: - DOMAIN=stargazer.example.com
+      - DOMAIN=
+
+      # 时区设置
+      - TZ=Asia/Shanghai
+
+      # 网络代理设置 
+      # - HTTP_PROXY=http://127.0.0.1:7890
+      # - HTTPS_PROXY=http://127.0.0.1:7890
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
