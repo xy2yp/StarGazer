@@ -1,0 +1,6 @@
+{
+  "notification": {
+    "title": "【StarGazer 星眸】观测到来自 {repo_name} 星座的引力波 📡",
+    "content": "🧑‍🚀 首席观星者：\n\n我们部署在 **{repo_full_name}** 象限的深空探测器刚刚捕获到一次新的能量脉冲！💥\n\n⚡ **[信号分析]**\n- ⏱️ **脉冲时间：** {pushed_at}\n- ✨ **引力读数：** {stargazers_count} ⭐\n- 📝 **星体快照：** {repo_description}\n\n🔭 信号源非常清晰，建议您亲自进行一次近距离观测！\n\n🚀 [建立临时虫洞，跃迁至信号源]({repo_html_url}/commits)"
+  }
+}
