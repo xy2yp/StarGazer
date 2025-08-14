@@ -1,0 +1,6 @@
+{
+  "notification": {
+    "title": "[StarGazer] Gravitational waves detected from the '{repo_name}' constellation 📡",
+    "content": "🧑‍🚀 Attention, Chief Stargazer:\n\nA new energy pulse has been captured by our deep space probe in the **{repo_full_name}** quadrant! 💥\n\n⚡ **[Signal Analysis]**\n- ⏱️ **Pulse Time:** {pushed_at}\n- ✨ **Gravity Reading:** {stargazers_count} ⭐\n- 📝 **Celestial Snapshot:** {repo_description}\n\n🔭 The signal source is clear. A close-range observation is highly recommended.\n\n🚀 [Wormhole initiated. Engaging jump to source.]({repo_html_url}/commits)"
+  }
+}
