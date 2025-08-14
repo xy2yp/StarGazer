@@ -1,0 +1,191 @@
+{
+  "userMenu": {
+    "settings": "Settings",
+    "syncNow": "SyncNow",
+    "logout": "Logout"
+  },
+  "toolbar": {
+    "viewList": "List",
+    "viewCard": "Grid",
+    "sort": {
+      "byDateStarred": "Date Starred",
+      "byDatePushed": "Last Updated",
+      "byStarCount": "Star Count",
+      "byRepoName": "Repo Name"
+    }
+  },
+  "sidebar": {
+    "systemFilters": {
+      "all": "⭐ All Stars",
+      "favorites": "💖 Favorites",
+      "untagged": "📥 UnTagged"
+    },
+    "titles": {
+      "tags": "🗂️ Tags",
+      "languages": "💻 Languages"
+    },
+    "buttons": {
+      "addTag": "[+] Add Tag"
+    },
+    "searchPlaceholder": "Search..."
+  },
+  "modals": {
+    "logout": {
+      "title": "Confirm",
+      "content": "Log out?"
+    },
+    "deleteTag": {
+      "title": "Delete tag \"{{tagName}}\"?",
+      "content": "This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "toasts": {
+    "saveOrderSuccess": "Order saved...",
+    "saveOrderError": "Failed to save order...",
+    "addTagSuccess": "Tag \"{{tagName}}\" added successfully!",
+    "addTagEmpty": "Tag name cannot be empty.",
+    "addTagExists": "Tag \"{{tagName}}\" already exists.",
+    "addTagError": "Failed to add tag...",
+    "deleteTagSuccess": "Tag \"{{tagName}}\" has been deleted.",
+    "deleteTagInUse": "Tag \"{{tagName}}\" contains repos...",
+    "deleteTagError": "Failed to delete tag...",
+    "updateSuccess": "Update successful.",
+    "updateError": "Update failed: {{error}}.",
+    "updateNotification": "Power up your Stargazing journey! Version '{{latestVersion}}' is available.",
+    "errors": {
+      "network": "Please check network connection.",
+      "networkShort": "Network error.",
+      "unknownNetwork": "Unknown network error."
+    },
+    "settingsGetError": "Failed to get settings: {{error}}.",
+    "settingsSaveSuccess": "Settings saved!",
+    "pushTestSuccess": "Test notification sent successfully! 🎉",
+    "pushTestError": "Failed to send test notification: {{error}}.",
+    "settingsSaveError": "Failed to save: {{error}}.",
+    "sync": {
+      "auto": "Auto-syncing latest data...",
+      "manual": "Manual sync in progress...",
+      "success": "Sync complete! Added: {{added}}, Updated: {{updated}}, Removed: {{removed}}.",
+      "error": "Sync failed: {{error}}."
+    },
+    "initError": "App initialization failed: {{error}}.",
+    "refreshError": "Failed to refresh data. Please try again later."
+  },
+  "settingsModal": {
+    "buttons": {
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "language": {
+      "legend": "Language Settings",
+      "tooltip": "The primary display language.",
+      "label": "UI Language",
+      "options": {
+        "zh": "简体中文",
+        "en": "English"
+      }
+    },
+    "sync": {
+      "legend": "Sync Settings",
+      "tooltip": "Set the automatic sync frequency with GitHub.",
+      "enableLabel": "Enable auto-sync",
+      "intervalLabel": "Sync interval",
+      "intervalUnit": " hours"
+    },
+    "notifications": {
+      "legend": "Notification Settings",
+      "tooltip": "Get notified via the selected service when a 'Favorite' repository is updated.",
+      "enableLabel": "Enable notifications",
+      "channelLabel": "Service",
+      "channelPlaceholder": "Select a service",
+      "proxyLabel": "Use system proxy for notifications"
+    },
+    "pushChannels": {
+      "bark": {
+        "key": "Device Key",
+        "server": "Server URL"
+      },
+      "gotify": {
+        "url": "Gotify URL",
+        "token": "App Token",
+        "priority": "Priority"
+      },
+      "serverchan": {
+        "key": "SendKey"
+      },
+      "webhook": {
+        "url": "Webhook URL",
+        "method": "HTTP Method",
+        "json": "JSON Template"
+      }
+    },
+    "dnd": {
+      "legend": "Do Not Disturb",
+      "tooltip": "Background sync and all notifications will be paused during this period.",
+      "enableLabel": "Enable Do Not Disturb mode",
+      "startLabel": "Start time",
+      "endLabel": "End time",
+      "timeUnit": ":00"
+    },
+    "donation": {
+      "legend": "Buy Me a Coffee ☕",
+      "tooltip": "If StarGazer brightens your starry sky, consider buying me a coffee ☕<br>Your support shines as the brightest star on this open-source journey ✨",
+      "alipay": "ALIPAY",
+      "wechat": "WeChat Pay"
+    }
+  },
+  "detailsPane": {
+    "noDescription": "No Description",
+    "favoriteButton": {
+      "favorite": "Favorite",
+      "unfavorite": "Unfavorite"
+    },
+    "viewOnGithub": "View on GitHub",
+    "sections": {
+      "tags": "Tags",
+      "details": "Details",
+      "notes": "Notes"
+    },
+    "stats": {
+      "stars": "Stars",
+      "language": "Language",
+      "updated": "Updated"
+    },
+    "tagsEditor": {
+      "addTag": "Add Tag",
+      "placeholder": "Choose or create a tag"
+    },
+    "notesEditor": {
+      "placeholder": "✨ Click to edit, Markdown supported",
+      "failedToLoad": "Failed to load editor. Please refresh."
+    },
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "timeAgo": {
+    "now": "just now",
+    "minute_one": "{{count}} minute ago",
+    "minute_other": "{{count}} minutes ago",
+    "hour_one": "{{count}} hour ago",
+    "hour_other": "{{count}} hours ago",
+    "day_one": "{{count}} day ago",
+    "day_other": "{{count}} days ago",
+    "month_one": "{{count}} month ago",
+    "month_other": "{{count}} months ago",
+    "year_one": "{{count}} year ago",
+    "year_other": "{{count}} years ago",
+    "unknown": "Unknown"
+  },
+  "emptyState": {
+    "title": "No matching repos found.",
+    "prompt": "Try adjusting your filters or search keywords."
+  },
+  "tagInput": {
+    "placeholder": "New Tag..."
+  },
+  "inlineEditor": {
+    "clear": "Clear"
+  }
+}
