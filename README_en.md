@@ -13,9 +13,11 @@ Have you ever found yourself:
  - Searching for a good Star management tool, but never finding one that feels just right?
 
 So have I! ~~So I decided to build one myself.~~
+
 **StarGazer** helps you manage your GitHub Stars with elegance and efficiency. Say goodbye to the frustration of getting lost among countless stars and rediscover the treasures you've collected.
-![1.png](1.png)
-![2.png](2.png)
+
+<img width="1100" height="647" alt="image" src="https://github.com/user-attachments/assets/52997f8a-9018-4f51-91a6-e8410387ef25" />
+<img width="1323" height="543" alt="image" src="https://github.com/user-attachments/assets/09e77f0e-55bb-40a9-9047-bda2184f2450" />
 
 ## ✨ Features
 - **OAuth Login Support**: Securely and conveniently log in using your GitHub account.
