@@ -14,9 +14,11 @@
  - 想找个好用的Star仓库管理项目，却没找到顺手的...
 
 我也是！~~所以我自己肝了一个出来~~
+
 **StarGazer -- 星眸** 帮助您优雅、高效地管理 GitHub Stars。告别在 N 个 Star 中迷失的烦恼，重新发现您收藏的宝藏。
 
 <img width="1100" height="647" alt="image" src="https://github.com/user-attachments/assets/52997f8a-9018-4f51-91a6-e8410387ef25" />
+
 <img width="1323" height="543" alt="image" src="https://github.com/user-attachments/assets/09e77f0e-55bb-40a9-9047-bda2184f2450" />
 
 ## ✨ 功能特性
