@@ -1,0 +1,191 @@
+{
+  "userMenu": {
+    "settings": "系统设置",
+    "syncNow": "手动同步",
+    "logout": "退出登录"
+  },
+  "toolbar": {
+    "viewList": "列表",
+    "viewCard": "卡片",
+    "sort": {
+      "byDateStarred": "收藏日期",
+      "byDatePushed": "更新时间",
+      "byStarCount": "Star 数量",
+      "byRepoName": "仓库名称"
+    }
+  },
+  "sidebar": {
+    "systemFilters": {
+      "all": "⭐ 全部项目",
+      "favorites": "💖 特别关注",
+      "untagged": "📥 暂未分组"
+    },
+    "titles": {
+      "tags": "🗂️ 我的分组",
+      "languages": "💻 开发语言"
+    },
+    "buttons": {
+      "addTag": "[+] 添加分组"
+    },
+    "searchPlaceholder": "搜索..."
+  },
+  "modals": {
+    "logout": {
+      "title": "确认退出",
+      "content": "退出登录？"
+    },
+    "deleteTag": {
+      "title": "要删除分组「<strong>{{tagName}}</strong>」吗？",
+      "content": "此操作无法撤销。",
+      "confirm": "删除",
+      "cancel": "取消"
+    }
+  },
+  "toasts": {
+    "saveOrderSuccess": "顺序已保存...",
+    "saveOrderError": "保存顺序失败...",
+    "addTagSuccess": "分组“{{tagName}}”添加成功！",
+    "addTagEmpty": "分组名不能为空。",
+    "addTagExists": "分组“{{tagName}}”已存在。",
+    "addTagError": "添加分组失败...",
+    "deleteTagSuccess": "分组“{{tagName}}”已删除。",
+    "deleteTagInUse": "分组“{{tagName}}”包含项目...",
+    "deleteTagError": "删除分组失败...",
+    "updateSuccess": "更新成功。",
+    "updateError": "更新失败: {{error}}。",
+    "updateNotification": "擦亮星眸，看见更清晰的星空！ '{{latestVersion}}' 版本已准备就绪。",
+    "errors": {
+      "network": "请检查网络连接。",
+      "networkShort": "网络错误。",
+      "unknownNetwork": "未知网络错误。"
+    },
+    "settingsGetError": "获取设置失败: {{error}}。",
+    "settingsSaveSuccess": "设置已保存！",
+    "pushTestSuccess": "测试通知发送成功！🎉",
+    "pushTestError": "发送测试通知失败: {{error}}。",
+    "settingsSaveError": "保存失败: {{error}}。",
+    "sync": {
+      "auto": "正在自动同步最新数据...",
+      "manual": "正在手动同步...",
+      "success": "同步完成！新增 {{added}}，更新 {{updated}}，移除 {{removed}}。",
+      "error": "同步失败: {{error}}。"
+    },
+    "initError": "应用初始化失败: {{error}}。",
+    "refreshError": "数据刷新失败，请稍后重试。"
+  },
+  "settingsModal": {
+    "buttons": {
+      "cancel": "取消",
+      "save": "保存"
+    },
+    "language": {
+      "legend": "语言设置",
+      "tooltip": "设置系统语言。",
+      "label": "界面语言",
+      "options": {
+        "zh": "简体中文",
+        "en": "English"
+      }
+    },
+    "sync": {
+      "legend": "同步设置",
+      "tooltip": "与 GitHub 自动同步收藏的频率。手动同步不受此限制。",
+      "enableLabel": "开启后台自动同步",
+      "intervalLabel": "同步间隔",
+      "intervalUnit": "小时"
+    },
+    "notifications": {
+      "legend": "通知设置",
+      "tooltip": "当 '特别关注' 的仓库有更新时，通过所选渠道向您发送通知。",
+      "enableLabel": "开启通知推送",
+      "channelLabel": "推送渠道",
+      "channelPlaceholder": "请选择渠道",
+      "proxyLabel": "为推送启用代理"
+    },
+    "pushChannels": {
+      "bark": {
+        "key": "Device Key",
+        "server": "Server URL"
+      },
+      "gotify": {
+        "url": "Gotify URL",
+        "token": "App Token",
+        "priority": "Priority"
+      },
+      "serverchan": {
+        "key": "SendKey"
+      },
+      "webhook": {
+        "url": "Webhook URL",
+        "method": "HTTP Method",
+        "json": "JSON Template"
+      }
+    },
+    "dnd": {
+      "legend": "勿扰设置",
+      "tooltip": "在此时间段内，后台自动同步和所有通知推送都将被暂停。",
+      "enableLabel": "开启免打扰模式",
+      "startLabel": "开始时间",
+      "endLabel": "结束时间",
+      "timeUnit": ":00"
+    },
+    "donation": {
+      "legend": "请我喝杯咖啡 ☕",
+      "tooltip": "如果 StarGazer 让你的星空更加璀璨，不妨请我喝杯咖啡 ☕<br>你的支持是开源路上最亮的那颗星 ✨",
+      "alipay": "支付宝",
+      "wechat": "微信"
+    }
+  },
+  "detailsPane": {
+    "noDescription": "该项目暂无描述。",
+    "favoriteButton": {
+      "favorite": "特别关注",
+      "unfavorite": "取消关注"
+    },
+    "viewOnGithub": "在 GitHub 查看",
+    "sections": {
+      "tags": "分组",
+      "details": "详情",
+      "notes": "笔记"
+    },
+    "stats": {
+      "stars": "Stars",
+      "language": "语言",
+      "updated": "更新"
+    },
+    "tagsEditor": {
+      "addTag": "添加分组",
+      "placeholder": "选择或创建分组"
+    },
+    "notesEditor": {
+      "placeholder": "✨ 点击文本区域进入编辑模式 • 支持 Markdown 语法",
+      "failedToLoad": "编辑器加载失败，请刷新重试"
+    },
+    "expand": "点击展开",
+    "collapse": "点击收起"
+  },
+  "timeAgo": {
+    "now": "刚刚",
+    "minute": "{{count}} 分钟前",
+    "minute_plural": "{{count}} 分钟前",
+    "hour": "{{count}} 小时前",
+    "hour_plural": "{{count}} 小时前",
+    "day": "{{count}} 天前",
+    "day_plural": "{{count}} 天前",
+    "month": "{{count}} 个月前",
+    "month_plural": "{{count}} 个月前",
+    "year": "{{count}} 年前",
+    "year_plural": "{{count}} 年前",
+    "unknown": "未知"
+  },
+  "emptyState": {
+    "title": "没有找到符合条件的仓库。",
+    "prompt": "请尝试调整筛选条件或搜索关键词。"
+  },
+  "tagInput": {
+    "placeholder": "新分组名..."
+  },
+  "inlineEditor": {
+    "clear": "清空内容"
+  }
+}
