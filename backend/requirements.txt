@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+httpx==0.25.2
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+backoff
+posthog
