@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarGazer - 星眸</title>
+
+    <!-- PWA & SEO -->
+    <meta name="description" content="StarGazer - 星眸,  GitHub Stars 管理器。">
+    <meta name="theme-color" content="#ffffff"/>
+    <link rel="icon" href="assets/icons/favicon.ico?v=1" type="image/x-icon">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/pico.min.css">
+    <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/libs/vditor/dist/index.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="app-loading">
+    <!-- 应用启动过渡动画层 -->
+    <div id="transition-overlay">
+        <div class="transition-text">
+            <h1 id="transition-text-en">StarGazer</h1>
+            <h2 id="transition-text-zh">星  眸</h2>
+        </div>
+    </div>
+
+    <!-- ==================== 登录视图 ==================== -->
+    <div id="login-view">
+        <div id="starfield-container"></div>
+        <h1 id="login-title">因星动，而璀璨</h1>
+        <p id="login-slogan">Where Stars Spark, Brilliance Begins</p>
+        <a href="/auth/login" role="button" id="login-button">
+            <span class="btn-text-zh">使用 GitHub 登录</span>
+            <span class="btn-text-en">Connect with GitHub</span>
+        </a>
+    </div>
+
+    <!-- ==================== 主应用视图 ==================== -->
+    <div id="app-view" style="display: none;">
+        
+        <!-- 页眉 -->
+        <header class="container-fluid">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/" class="logo-container">
+                            <svg class="logo-svg" width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <g>
+                                    <path d="M 85 50 A 35 35 0 1 1 50 15" class="logo-arc" stroke-width="6" stroke-dasharray="3 9" />
+                                    <path d="M 75 50 A 25 25 0 1 1 50 25" class="logo-arc" stroke-width="6" stroke-dasharray="3 9" stroke-opacity="0.7" />
+                                    <path d="M 65 50 A 15 15 0 1 1 50 35" class="logo-arc" stroke-width="6" stroke-dasharray="3 9" stroke-opacity="0.4" />
+                                    <polygon points="50,42 52.35,46.76 57.61,47.53 53.8,51.24 55.88,56.47 50,54 44.12,56.47 46.2,51.24 42.39,47.53 47.65,46.76" class="logo-star" transform="translate(1 -1)" />
+                                </g>
+                            </svg>
+                            <strong>StarGazer</strong>
+                        </a>
+                    </li>
+                    <li class="nav-toggle-container">
+                        <button id="menu-toggle-button" aria-label="Toggle menu">
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <details role="list" class="dropdown-container">
+                            <summary aria-haspopup="listbox" role="button" class="secondary outline" id="user-profile-button">
+                                <div id="avatar-container" class="avatar">
+                                    <svg height="22" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="22" fill="currentColor"><path d="M8 0.198c-4.4 0-8 3.6-8 8 0 3.5 2.3 6.5 5.5 7.6.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1.1-2.7-1.1-.4-1-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.2 1.9 .9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.2-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8.6-.2 1.3-.3 2-.3s1.4.1 2 .3c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.2 0 3.1-1.9 3.8-3.6 4 .3.3.6.8.6 1.5v2.2c0 .2.1.5.5.4C13.7 14.698 16 11.698 16 8.198c0-4.4-3.6-8-8-8z"></path></svg>
+                                </div>
+                                <span id="user-login">username</span>
+                            </summary>
+                            <ul role="listbox">
+                                <li><a href="#" id="settings-button"><i class="fa-solid fa-gear fa-fw"></i> <span data-i18n="userMenu.settings">系统设置</span></a></li>
+                                <li><a href="#" id="manual-sync-button"><i class="fa-solid fa-rotate fa-fw"></i> <span data-i18n="userMenu.syncNow">手动同步</span></a></li>
+                                <li><a href="#" id="logout-button" class="text-danger"><i class="fa-solid fa-right-from-bracket fa-fw"></i> <span data-i18n="userMenu.logout">退出登录</span></a></li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="container-fluid">
+            <aside id="sidebar">
+                <div class="sidebar-unit search-container">
+                    <input type="search" id="search-box" placeholder="搜索..." data-i18n="[placeholder]sidebar.searchPlaceholder">
+                </div>
+                <hr>
+                <div class="sidebar-unit">
+                    <a href="#" data-filter="all" class="group-item is-active" data-i18n="sidebar.systemFilters.all">⭐ 全部项目 <span class="filter-count">0</span></a>
+                </div>
+                <div class="sidebar-unit">
+                    <a href="#" data-filter="constellation" class="group-item" data-i18n="sidebar.systemFilters.favorites">💖 特别关注 <span class="filter-count">0</span></a>
+                </div>
+                <div class="sidebar-unit">
+                    <details>
+                        <summary class="sidebar-group-title">
+                            <span class="group-title-text" data-i18n="sidebar.titles.tags">🗂️ 我的分组</span>
+                            <span class="group-title-arrow"></span>
+                        </summary>
+                        <ul id="tags-list" class="sortable-list"></ul>
+                        <div id="add-tag-container" class="add-tag-control">
+                            <a href="#" id="add-tag-button" data-i18n="sidebar.buttons.addTag">[+] 添加分组</a>
+                        </div>
+                    </details>
+                </div>
+                <div class="sidebar-unit">
+                    <details>
+                        <summary class="sidebar-group-title">
+                            <span class="group-title-text" data-i18n="sidebar.titles.languages">💻 开发语言</span>
+                            <span class="group-title-arrow"></span>
+                        </summary>
+                        <ul id="languages-list" class="sortable-list"></ul>
+                    </details>
+                </div>
+                <div class="sidebar-unit">
+                    <a href="#" data-filter="untagged" class="group-item" data-i18n="sidebar.systemFilters.untagged">📥 暂未分组 <span class="filter-count">0</span></a>
+                </div>
+            </aside>
+            <section id="repo-list-container" class="view-list">
+                <div class="toolbar">
+                    <div id="view-switcher" class="segmented-control">
+                        <button data-view="list" class="active" data-i18n="toolbar.viewList">列表</button>
+                        <button data-view="card" data-i18n="toolbar.viewCard">卡片</button>
+                        <span class="glider"></span>
+                    </div>
+                    <div id="sort-selector" class="custom-select-wrapper">
+                        <span id="sort-selector-display"></span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <select id="sort-by">
+                            <option value="starred_at" data-i18n="toolbar.sort.byDateStarred">收藏日期</option>
+                            <option value="pushed_at" data-i18n="toolbar.sort.byDatePushed">更新时间</option>
+                            <option value="stargazers_count" data-i18n="toolbar.sort.byStarCount">Star 数量</option>
+                            <option value="name" data-i18n="toolbar.sort.byRepoName">仓库名称</option>
+                        </select>
+                    </div>
+                    <div id="mobile-sort-container" class="dropdown-container">
+                        <button id="mobile-sort-button" aria-haspopup="listbox" aria-label="Sort options">
+                            <i class="fa-solid fa-arrow-down-wide-short"></i>
+                        </button>
+                            <ul role="listbox" id="mobile-sort-options">
+                            </ul>
+                    </div>
+                </div>
+                <div id="virtual-scroll-container"></div>
+            </section>
+            <aside id="repo-details" class="slide-panel"></aside>
+        </main>
+        <div id="overlay" class="overlay"></div>
+        <footer class="container-fluid">
+            <small>
+                <a href="https://github.com/xy2yp/stargazer" target="_blank" rel="noopener noreferrer">© StarGazer By XY.</a>
+            </small>
+        </footer>
+    </div>
+
+    <!-- 全局组件和模板 -->
+    <div id="toast-container"></div>
+    <dialog id="settings-view-modal"></dialog>
+    <dialog id="confirmation-modal">
+        <article class="confirmation-modal-article">
+            <div class="confirmation-modal-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div id="confirmation-modal-content"></div>
+            <footer class="confirmation-modal-footer">
+                <button class="secondary modal-confirm-btn">删除</button>
+                <button class="modal-close-btn">取消</button>
+            </footer>
+        </article>
+    </dialog>
+    <template id="repo-list-item-template">
+        <div class="repo-item" data-repo-id="">
+            <div class="repo-item-grid">
+                <div class="repo-favorite-icon">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
+                <div class="repo-name-tags">
+                    <span class="repo-display-name"></span>
+                    <div class="repo-tags-container"></div>
+                </div>
+                <div class="repo-meta-items">
+                    <div class="repo-stars">
+                        <i class="fa-solid fa-star" title="Stars"></i>
+                        <span></span>
+                    </div>
+                    <div class="repo-updated-at">
+                        <i class="fa-solid fa-clock-rotate-left" title="Last Push"></i>
+                        <span></span>
+                    </div>
+                    <div class="repo-language">
+                        <i class="fa-solid fa-code" title="Language"></i>
+                        <span class="repo-language-text"></span>
+                    </div>
+                </div>
+                <div class="repo-description"></div>
+            </div>
+        </div>
+    </template>
+    <template id="repo-card-item-template">
+        <div class="repo-item" data-repo-id="">
+            <div class="repo-card-grid">
+                <div class="repo-card-header">
+                    <h6 class="repo-display-name"></h6>
+                    <div class="repo-favorite-icon">
+                        <i class="fa-regular fa-heart"></i>
+                    </div>
+                </div>
+                <div class="repo-card-tags">
+                    <div class="repo-tags-container"></div>
+                </div>
+                <div class="repo-card-description"></div>
+                <div class="repo-card-footer">
+                    <div class="repo-stars">
+                        <i class="fa-solid fa-star"></i>
+                        <span></span>
+                    </div>
+                    <div class="repo-updated-at">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span></span>
+                    </div>
+                    <div class="repo-language">
+                        <i class="fa-solid fa-code"></i>
+                        <span class="repo-language-text"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ==================== JS Scripts ==================== -->
+    <!-- 第三方库 -->
+    <script src="assets/libs/sortable.min.js"></script>
+    <script src="assets/libs/marked.min.js"></script>
+    <script src="assets/libs/dompurify.min.js"></script>
+    <script src="assets/libs/fuse.min.js"></script>
+    <script src="assets/libs/hammer.min.js"></script>
+    
+    <!-- 异步加载 Vditor，避免阻塞渲染 -->
+    <link rel="preload" href="assets/libs/vditor/dist/js/lute/lute.min.js" as="script">
+    <script src="assets/libs/vditor/dist/index.min.js" defer></script>
+
+    <!-- i18n 国际化库 -->
+    <script src="assets/libs/i18next.min.js"></script>
+    <script src="js/i18n.js"></script>
+
+    <!-- 应用核心脚本 -->
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
