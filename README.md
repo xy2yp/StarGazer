@@ -202,6 +202,18 @@ StarGazer/
 └── README_en.md                              # 项目说明文档 (英文)
 ```
 
+## 📊 遥测说明 (Telemetry)
+
+应用在启动时会发送一次**匿名的** 、**一次性**的遥测事件。
+
+- **收集了什么？** 只收集当前部署的 **版本号** (`version`)。
+- **没有收集什么？** 遥测是完全匿名的。**没有且不会**收集任何个人身份信息 (PII) / GitHub 数据 / API 密钥 / IP 地址 / 任何其他敏感信息。
+- **如何关闭？** 只需在 `docker-compose.yml` 文件中设置一个环境变量即可完全禁用此功能：
+  ```yaml
+  environment:
+    - DISABLE_TELEMETRY=True
+  ```
+  
 ## 🛠️ 技术栈
 
 -   **后端**: FastAPI
