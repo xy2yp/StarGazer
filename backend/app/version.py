@@ -1,4 +1,4 @@
 """
 定义应用程序的版本号。
 """
-__version__ = "Aries"
+__version__ = "aries"
