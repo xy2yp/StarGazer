@@ -200,6 +200,18 @@ StarGazer/
 └── README_en.md                              # Project documentation (English)
 ```
 
+## 📊 Telemetry
+
+To better understand and improve StarGazer, the application sends a **Single**, **Anonymous** telemetry event upon startup.
+
+- **What do we collect?** Only the current deployed **version** of the application.
+- **What do we NOT collect?** The telemetry is completely anonymous.We **Do Not & Will Not** collect any personally identifiable information (PII), your GitHub data, API keys, IP addresses, or any other sensitive information. 
+- **How to disable it?** If you prefer not to send this information, you can completely disable it by setting an environment variable in your `docker-compose.yml` file:
+  ```yaml
+  environment:
+    - DISABLE_TELEMETRY=True
+  ```
+
 ## 🛠️ Tech Stack
 
 -   **Backend**: FastAPI
