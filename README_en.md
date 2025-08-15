@@ -131,6 +131,9 @@ docker-compose up -d
 ### Step 4: Access the Application
 
 Deployment successful! Start managing your GitHub Stars with StarGazer!
+**Please note that StarGazer is designed for personal, single-user use.**
+**Do not use multiple accounts or share the same instance with others, as this will lead to user data confusion and overwriting.**
+**If multi-user support is needed, please deploy multiple instances.**
 
 ## 🌳 File Tree
 
