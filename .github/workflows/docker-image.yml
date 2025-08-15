@@ -25,8 +25,8 @@ jobs:
       - name: Extract version
         id: extract_version
         run: |
-          VERSION=$(grep -o '".*"' backend/app/version.py | tr -d '"')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          VERSION=$(python -c "from backend.app.version import __version__; print(__version__)")
+          echo "VERSION=${VERSION,,}" >> "$GITHUB_ENV"
 
       - name: Build and push
         uses: docker/build-push-action@v4
