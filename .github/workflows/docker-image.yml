@@ -34,4 +34,6 @@ jobs:
           context: .
           file: ./backend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/stargazer:${{ env.VERSION }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/stargazer:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/stargazer:latest
