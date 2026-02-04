@@ -165,7 +165,7 @@ async def update_settings(
 
         # 根据判断结果发送测试推送
         if should_send_test_push:
-            notifier = create_notifier(temp_settings_for_test)
+            notifier = create_notifier(session, temp_settings_for_test)
             
             if notifier:
                 try:
