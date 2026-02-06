@@ -23,7 +23,14 @@ USER_UPDATABLE_SETTINGS_KEYS = [
     "dnd_start_hour",
     "dnd_end_hour",
     "is_push_proxy_enabled",
-    "ui_language"
+    "ui_language",
+    # AI 总结相关
+    "is_ai_enabled",
+    "is_auto_analysis_enabled",
+    "ai_base_url",
+    "ai_api_key",
+    "ai_model",
+    "ai_concurrency"
 ]
 
 def _get_or_create_settings(session: Session) -> AppSettings:
@@ -91,7 +98,7 @@ def update_app_settings(session: Session, settings_data: Dict[str, Any]) -> AppS
     for key, value in settings_data.items():
         # 安全性检查：只允许更新白名单里的字段
         if key in USER_UPDATABLE_SETTINGS_KEYS:
-            # 对 push_config 字段进行加密处理
+            # 对 push_config 和 ai_api_key 字段进行加密处理
             if key == 'push_config':
                 if value:
                     # 将字典转换为JSON字符串再加密
@@ -99,6 +106,13 @@ def update_app_settings(session: Session, settings_data: Dict[str, Any]) -> AppS
                     value_to_save = encrypt_data(json.dumps(value))
                 else:
                     # 如果传入空值，则清空数据库字段
+                    value_to_save = None
+                setattr(settings_record, key, value_to_save)
+            elif key == 'ai_api_key':
+                if value:
+                    # 加密 AI API 密钥
+                    value_to_save = encrypt_data(value)
+                else:
                     value_to_save = None
                 setattr(settings_record, key, value_to_save)
             else:
