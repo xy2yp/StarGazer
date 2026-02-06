@@ -166,6 +166,7 @@ const app = (() => {
                     { name: 'name', weight: 0.4 },
                     { name: 'alias', weight: 0.4 },
                     { name: 'full_name', weight: 0.3 },
+                    { name: 'ai_summary', weight: 0.25 },  // 新增：AI 总结
                     { name: 'description', weight: 0.2 },
                     { name: 'notes', weight: 0.2 },
                     { name: 'language', weight: 0.1 },
@@ -940,6 +941,49 @@ const app = (() => {
                 ui.showToast(i18n.t('toasts.refreshError'), 'error');
             } finally {
                 ui.setGlobalLoading(false);
+            }
+        },
+
+        // AI 分析相关函数
+        async handleSummarizeAll() {
+            ui.showConfirmationModal({
+                title: i18n.t('modals.summary.title'),
+                content: i18n.t('modals.summary.content'),
+                onConfirm: async () => {
+                    try {
+                        const result = await api.startSummary('all');
+                        if (result.total === 0) {
+                            ui.showToast(i18n.t('toasts.summary.noRepos'), 'info');
+                        } else {
+                            ui.showToast(i18n.t('toasts.summary.started', { total: result.total }), 'success');
+                        }
+                    } catch (error) {
+                        console.error('启动分析失败:', error);
+                        ui.showToast(
+                            i18n.t('toasts.summary.error', { error: error.data?.message_zh || i18n.t('toasts.errors.network') }),
+                            'error'
+                        );
+                    }
+                },
+                confirmText: i18n.t('modals.summary.confirm'),
+                cancelText: i18n.t('modals.summary.cancel')
+            });
+        },
+
+        async handleSummarizeUnanalyzed() {
+            try {
+                const result = await api.startSummary('unanalyzed');
+                if (result.total === 0) {
+                    ui.showToast(i18n.t('toasts.summary.noRepos'), 'info');
+                } else {
+                    ui.showToast(i18n.t('toasts.summary.started', { total: result.total }), 'success');
+                }
+            } catch (error) {
+                console.error('启动总结失败:', error);
+                ui.showToast(
+                    i18n.t('toasts.summary.error', { error: error.data?.message_zh || i18n.t('toasts.errors.network') }),
+                    'error'
+                );
             }
         }
     }; 
