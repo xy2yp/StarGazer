@@ -4,6 +4,7 @@
 """
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List, Dict, Any
+from datetime import datetime
 
 class ErrorResponse(BaseModel):
     """标准化的 API 错误响应结构。"""
@@ -35,6 +36,9 @@ class RepoResponse(BaseModel):
     alias: Optional[str] = None     # 用户设置的别名
     notes: Optional[str] = None     # 用户的详细备注 (支持 Markdown)
     tags: List[str] = []            # 用户打的标签列表
+    ai_summary: Optional[str] = None  # AI 生成的仓库总结
+    analyzed_at: Optional[datetime] = None  # AI 分析时间戳
+    analysis_failed: Optional[bool] = None  # AI 分析是否失败
 
 class StarsResponse(BaseModel):
     """`/api/stars` 接口的完整响应体结构。"""
@@ -71,3 +75,62 @@ class RepoUpdateRequest(BaseModel):
                 raise ValueError(f"标签 '{tag[:10]}...' 的长度不能超过 {TAG_MAX_LENGTH} 个字符。")
         
         return tags_list
+
+class AppSettingsUpdateRequest(BaseModel):
+    """更新应用设置的请求体结构。"""
+    # 后台任务相关
+    github_access_token: Optional[str] = None
+    is_background_sync_enabled: Optional[bool] = None
+    sync_interval_hours: Optional[int] = None
+
+    # 推送通知相关
+    is_push_enabled: Optional[bool] = None
+    push_channel: Optional[str] = None
+    push_config: Optional[Dict[str, Any]] = None
+    is_dnd_enabled: Optional[bool] = None
+    dnd_start_hour: Optional[int] = None
+    dnd_end_hour: Optional[int] = None
+    is_push_proxy_enabled: Optional[bool] = None
+
+    # 界面相关
+    tags_order: Optional[List[str]] = None
+    languages_order: Optional[List[str]] = None
+    ui_language: Optional[str] = None
+
+    # AI 总结相关
+    is_ai_enabled: Optional[bool] = None
+    is_auto_analysis_enabled: Optional[bool] = None
+    ai_base_url: Optional[str] = None
+    ai_api_key: Optional[str] = None
+    ai_model: Optional[str] = None
+    ai_concurrency: Optional[int] = Field(None, ge=1, le=5)
+
+class AppSettingsResponse(BaseModel):
+    """应用设置的响应体结构。"""
+    # 后台任务相关
+    github_access_token: Optional[str] = None
+    is_background_sync_enabled: bool
+    sync_interval_hours: int
+
+    # 推送通知相关
+    is_push_enabled: bool
+    push_channel: Optional[str] = None
+    push_config: Dict[str, Any]
+    is_dnd_enabled: bool
+    dnd_start_hour: int
+    dnd_end_hour: int
+    is_push_proxy_enabled: bool
+    failed_push_count: int
+
+    # 界面相关
+    tags_order: List[str]
+    languages_order: List[str]
+    ui_language: str
+
+    # AI 总结相关
+    is_ai_enabled: bool
+    is_auto_analysis_enabled: bool
+    ai_base_url: Optional[str] = None
+    ai_api_key: Optional[str] = None
+    ai_model: Optional[str] = None
+    ai_concurrency: int
