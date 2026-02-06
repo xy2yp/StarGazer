@@ -38,6 +38,13 @@ class AppSettingsUpdateRequest(BaseModel):
     dnd_end_hour: Optional[int] = None
     is_push_proxy_enabled: Optional[bool] = None
     ui_language: Optional[str] = None
+    # AI 总结相关
+    is_ai_enabled: Optional[bool] = None
+    is_auto_analysis_enabled: Optional[bool] = None
+    ai_base_url: Optional[str] = None
+    ai_api_key: Optional[str] = None
+    ai_model: Optional[str] = None
+    ai_concurrency: Optional[int] = None
 
 class AppSettingsResponse(BaseModel):
     """获取应用设置的响应体模型。"""
@@ -56,6 +63,13 @@ class AppSettingsResponse(BaseModel):
     ui_language: Optional[str]
     test_push_status: Optional[str] = None # 测试推送的状态: "success" 或 "failed"
     test_push_error: Optional[str] = None # 测试推送失败时的错误信息
+    # AI 总结相关
+    is_ai_enabled: bool
+    is_auto_analysis_enabled: bool
+    ai_base_url: Optional[str]
+    ai_api_key: Optional[str]
+    ai_model: Optional[str]
+    ai_concurrency: int
 
 @router.get("", response_model=AppSettingsResponse, summary="Get application settings")
 async def get_settings(
@@ -76,6 +90,15 @@ async def get_settings(
             # 解密失败时返回空字典，避免前端出错
             decrypted_push_config = {}
 
+    # 解密 AI API 密钥以供前端使用
+    decrypted_ai_api_key = None
+    if app_settings.ai_api_key:
+        try:
+            decrypted_ai_api_key = decrypt_data(app_settings.ai_api_key)
+        except Exception as e:
+            logger.error(f"Failed to decrypt ai_api_key: {e}", exc_info=True)
+            decrypted_ai_api_key = None
+
     return AppSettingsResponse(
         is_background_sync_enabled=app_settings.is_background_sync_enabled,
         sync_interval_hours=app_settings.sync_interval_hours,
@@ -90,6 +113,12 @@ async def get_settings(
         tags_order=app_settings.tags_order,
         languages_order=app_settings.languages_order,
         ui_language=app_settings.ui_language,
+        is_ai_enabled=app_settings.is_ai_enabled,
+        is_auto_analysis_enabled=app_settings.is_auto_analysis_enabled,
+        ai_base_url=app_settings.ai_base_url,
+        ai_api_key=decrypted_ai_api_key,  # 使用解密后的密钥
+        ai_model=app_settings.ai_model,
+        ai_concurrency=app_settings.ai_concurrency,
     )
 
 @router.put("", response_model=AppSettingsResponse, summary="Update application settings")
@@ -157,6 +186,15 @@ async def update_settings(
             except Exception as e:
                 logger.error(f"Failed to decrypt push_config for test notification: {e}")
                 decrypted_push_config_for_test = {}
+
+        # 解密更新后的 AI API 密钥以供返回
+        decrypted_ai_api_key_for_response = None
+        if updated_settings.ai_api_key:
+            try:
+                decrypted_ai_api_key_for_response = decrypt_data(updated_settings.ai_api_key)
+            except Exception as e:
+                logger.error(f"Failed to decrypt ai_api_key: {e}")
+                decrypted_ai_api_key_for_response = None
         
         # 创建用于测试的临时设置对象（包含解密后的配置）
         temp_settings_for_test = updated_settings.model_copy(
@@ -212,9 +250,15 @@ async def update_settings(
             is_push_proxy_enabled=updated_settings.is_push_proxy_enabled,
             tags_order=updated_settings.tags_order,
             languages_order=updated_settings.languages_order,
-            ui_language=updated_settings.ui_language, 
+            ui_language=updated_settings.ui_language,
             test_push_status=test_push_status,
-            test_push_error=test_push_error
+            test_push_error=test_push_error,
+            is_ai_enabled=updated_settings.is_ai_enabled,
+            is_auto_analysis_enabled=updated_settings.is_auto_analysis_enabled,
+            ai_base_url=updated_settings.ai_base_url,
+            ai_api_key=decrypted_ai_api_key_for_response,  # 使用解密后的密钥
+            ai_model=updated_settings.ai_model,
+            ai_concurrency=updated_settings.ai_concurrency,
         )
 
     except Exception as e:
