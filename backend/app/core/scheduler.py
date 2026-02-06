@@ -14,6 +14,7 @@ from app.core.settings_service import get_app_settings, increment_failed_push_co
 from app.core.sync_service import run_full_sync
 from app.core.notifiers.factory import create_notifier
 from app.core.notifiers.message import create_notification_message
+from app.core.summary_service import get_repos_to_summarize, summarize_repos_batch
 from app.models import AppSettings
 
 logger = logging.getLogger(__name__)
@@ -107,6 +108,26 @@ async def _perform_sync_and_notify_actions(session: Session) -> AppSettings:
         # 3. 在一次事务中提交所有数据库更改（包括同步数据和失败计数）
         session.commit()
         logger.info("All database changes for this cycle have been committed.")
+
+        # 4. 检查是否需要触发 AI 自动总结
+        if app_settings.is_ai_enabled and app_settings.is_auto_analysis_enabled:
+            updated_repo_ids = stats.get("updated_repo_ids", [])
+            try:
+                # 获取需要总结的仓库
+                repos_to_summarize, readme_cache = await get_repos_to_summarize(
+                    mode="auto",
+                    updated_repo_ids=updated_repo_ids
+                )
+
+                if repos_to_summarize:
+                    logger.info(f"开始自动 AI 总结，共 {len(repos_to_summarize)} 个仓库")
+                    await summarize_repos_batch(repos_to_summarize, app_settings, readme_cache)
+                else:
+                    logger.info("没有需要自动总结的仓库")
+
+            except Exception as e:
+                logger.error(f"自动 AI 总结失败：{e}", exc_info=True)
+                # AI 总结失败不影响主流程，继续执行
 
     return app_settings
 
