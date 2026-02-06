@@ -2,5 +2,6 @@
   "notification": {
     "title": "[StarGazer] Gravitational waves detected from the '{repo_name}' constellation 📡",
     "content": "🧑‍🚀 Attention, Chief Stargazer:\n\nA new energy pulse has been captured by our deep space probe in the **{repo_full_name}** quadrant! 💥\n\n⚡ **[Signal Analysis]**\n- ⏱️ **Pulse Time:** {pushed_at}\n- ✨ **Gravity Reading:** {stargazers_count} ⭐\n- 📝 **Celestial Snapshot:** {repo_description}\n\n🔭 The signal source is clear. A close-range observation is highly recommended.\n\n🚀 [Wormhole initiated. Engaging jump to source.]({repo_html_url}/commits)"
-  }
+  },
+  "ai_summary_prompt": "You are a professional GitHub repository analyst. Analyze the repository and provide a concise, accurate, search-friendly summary in English.\n\nAnalyze this GitHub repository and provide a concise English summary.\n\nRequirements:\n1. No more than 400 English characters\n2. Describe the main purpose, core features, and technical highlights\n3. Use plain language, avoid overly technical jargon\n4. Include keywords and core concepts suitable for search matching\n5. Return the summary text directly, no JSON or other wrapping\n\nRepository: {full_name}\n\nREADME content (first 2000 characters):\n{readme_content}\n\nReturn the summary text directly."
 }
