@@ -39,6 +39,12 @@
       "content": "This action cannot be undone.",
       "confirm": "Delete",
       "cancel": "Cancel"
+    },
+    "summary": {
+      "title": "Confirm Analysis",
+      "content": "All repositories will be analyzed by AI. This may take a while.",
+      "confirm": "Start",
+      "cancel": "Cancel"
     }
   },
   "toasts": {
@@ -71,7 +77,12 @@
       "error": "Sync failed: {{error}}."
     },
     "initError": "App initialization failed: {{error}}.",
-    "refreshError": "Failed to refresh data. Please try again later."
+    "refreshError": "Failed to refresh data. Please try again later.",
+    "summary": {
+      "started": "Analysis started. {{total}} repositories in total.",
+      "noRepos": "No repositories need analysis.",
+      "error": "Failed to start analysis: {{error}}."
+    }
   },
   "settingsModal": {
     "buttons": {
@@ -120,6 +131,23 @@
         "method": "HTTP Method",
         "json": "JSON Template"
       }
+    },
+    "ai": {
+      "legend": "AI Settings",
+      "tooltip": "Use AI to analyze repository README and generate summaries for enhanced search",
+      "enableLabel": "Enable AI Analysis",
+      "autoLabel": "Auto Analysis",
+      "baseUrlLabel": "API Endpoint",
+      "baseUrlPlaceholder": "https://api.openai.com/v1",
+      "apiKeyLabel": "API Key",
+      "apiKeyPlaceholder": "Enter API Key",
+      "modelLabel": "Model",
+      "modelPlaceholder": "gpt-3.5-turbo",
+      "concurrencyLabel": "Concurrency",
+      "concurrencyUnit": "",
+      "manualLabel": "Manual Analysis",
+      "summarizeAll": "All Repos",
+      "summarizeUnanalyzed": "Pending Repos"
     },
     "dnd": {
       "legend": "Do Not Disturb",
