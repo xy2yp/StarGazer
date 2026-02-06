@@ -1601,6 +1601,55 @@ summary::marker {
     margin-top: 0;
 }
 
+/* 按钮组 */
+.settings-control-row:has(.button-group) {
+    grid-template-columns: 1fr !important;
+}
+
+.button-group {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+}
+
+#settings-view-modal .button-group button {
+    margin: 0;
+    border-radius: var(--settings-btn-radius);
+    padding: 0.6rem 1rem;
+    font-size: var(--settings-label-size);
+    font-weight: 500;
+    border: 2px solid var(--pico-primary);
+    background: transparent;
+    color: var(--pico-primary);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    width: 210px;
+    flex: 0 0 auto;
+    height: auto;
+    white-space: nowrap;
+}
+
+#settings-view-modal .button-group button:hover {
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse);
+    border-color: var(--pico-primary);
+    box-shadow: var(--settings-control-glow);
+    transform: translateY(-1px);
+}
+
+#settings-view-modal .button-group button:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+@media (max-width: 768px) {
+    .button-group {
+        gap: 1rem;
+    }
+    #settings-view-modal .button-group button {        width: 40%;
+        max-width: 210px;
+    }
+}
+
 @media (min-width: 769px) {
     .settings-control-row {
         grid-template-columns: 1fr auto;
@@ -1667,6 +1716,7 @@ summary::marker {
 /* 药丸控件系统 */
 
 #settings-view-modal input[type="text"],
+#settings-view-modal input[type="password"],
 #settings-view-modal input[type="number"],
 #settings-view-modal input[type="url"],
 #settings-view-modal input[type="email"] {
@@ -1681,6 +1731,7 @@ summary::marker {
 }
 
 #settings-view-modal input[type="text"]:hover,
+#settings-view-modal input[type="password"]:hover,
 #settings-view-modal input[type="number"]:hover,
 #settings-view-modal input[type="url"]:hover,
 #settings-view-modal input[type="email"]:hover {
@@ -1689,6 +1740,7 @@ summary::marker {
 }
 
 #settings-view-modal input[type="text"]:focus,
+#settings-view-modal input[type="password"]:focus,
 #settings-view-modal input[type="number"]:focus,
 #settings-view-modal input[type="url"]:focus,
 #settings-view-modal input[type="email"]:focus {
