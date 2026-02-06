@@ -156,6 +156,17 @@ const api = (() => {
             // 安全与正确性：对标签名进行 URL 编码，以防止标签中包含的特殊字符破坏 API 路由的结构。
             const encodedTagName = encodeURIComponent(tagName);
             return _request(`/api/tags/${encodedTagName}`, { method: 'DELETE' });
-        }
+        },
+
+        /**
+         * 启动 AI 总结任务
+         * POST /api/summary/start
+         * @param {string} mode - 总结模式 ("all" | "unanalyzed")
+         */
+        startSummary: (mode) => _request('/api/summary/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode })
+        })
     };
 })();
