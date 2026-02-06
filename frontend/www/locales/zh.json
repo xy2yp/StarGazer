@@ -39,6 +39,12 @@
       "content": "此操作无法撤销。",
       "confirm": "删除",
       "cancel": "取消"
+    },
+    "summary": {
+      "title": "确认分析",
+      "content": "将对所有项目执行 AI 分析，这可能需要较长时间。",
+      "confirm": "开始",
+      "cancel": "取消"
     }
   },
   "toasts": {
@@ -71,7 +77,12 @@
       "error": "同步失败: {{error}}。"
     },
     "initError": "应用初始化失败: {{error}}。",
-    "refreshError": "数据刷新失败，请稍后重试。"
+    "refreshError": "数据刷新失败，请稍后重试。",
+    "summary": {
+      "started": "分析任务已启动，共 {{total}} 个项目。",
+      "noRepos": "没有需要分析的项目。",
+      "error": "启动分析失败: {{error}}。"
+    }
   },
   "settingsModal": {
     "buttons": {
@@ -120,6 +131,23 @@
         "method": "HTTP Method",
         "json": "JSON Template"
       }
+    },
+    "ai": {
+      "legend": "AI 设置",
+      "tooltip": "使用 AI 分析仓库 README 并生成总结，用于增强搜索",
+      "enableLabel": "启用 AI 分析",
+      "autoLabel": "自动分析",
+      "baseUrlLabel": "API 端点",
+      "baseUrlPlaceholder": "https://api.openai.com/v1",
+      "apiKeyLabel": "API 密钥",
+      "apiKeyPlaceholder": "输入 API 密钥",
+      "modelLabel": "模型名称",
+      "modelPlaceholder": "gpt-3.5-turbo",
+      "concurrencyLabel": "并发数",
+      "concurrencyUnit": "个",
+      "manualLabel": "手动分析",
+      "summarizeAll": "全部项目",
+      "summarizeUnanalyzed": "未分析项目"
     },
     "dnd": {
       "legend": "勿扰设置",
