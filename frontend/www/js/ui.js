@@ -1420,9 +1420,16 @@ const ui = (() => {
                         <input type="checkbox" id="${field.id}" name="${field.id}" ${field.value ? 'checked' : ''}>
                         <span class="slider"></span>
                     </label>`;
+                } else if (field.type === 'button-group') {
+                    formHtml += `<label class="settings-control-label">${field.label}</label>`;
+                    formHtml += `<div class="button-group">`;
+                    field.buttons.forEach(btn => {
+                        formHtml += `<button type="button" id="${btn.id}" class="secondary">${btn.text}</button>`;
+                    });
+                    formHtml += `</div>`;
                 } else {
                     formHtml += `<label class="settings-control-label" for="${field.id}">${field.label}</label>`;
-                    
+
                     switch (field.type) {
                         case 'select':
                             formHtml += `<select id="${field.id}" name="${field.id}">`;
@@ -1446,8 +1453,14 @@ const ui = (() => {
                         case 'email':
                             formHtml += `<input type="${field.type}" id="${field.id}" name="${field.id}" value="${field.value || ''}" ${field.required ? 'required' : ''} placeholder="${field.placeholder || ''}">`;
                             break;
+                        case 'password':
+                            formHtml += `<input type="${field.type}" id="${field.id}" name="${field.id}" value="${field.value || ''}" ${field.required ? 'required' : ''} placeholder="${field.placeholder || ''}" autocomplete="new-password" data-lpignore="true" data-form-type="other">`;
+                            break;
                         case 'textarea':
                             formHtml += `<textarea id="${field.id}" name="${field.id}" rows="${field.rows || 3}" placeholder="${field.placeholder || ''}">${field.value || ''}</textarea>`;
+                            break;
+                        case 'button':
+                            formHtml += `<button type="button" id="${field.id}" class="secondary">${field.buttonText || field.label}</button>`;
                             break;
                     }
                 }
@@ -1837,7 +1850,7 @@ const ui = (() => {
         /**
          * 显示一个确认对话框
          */
-        showConfirmationModal({ title, content, onConfirm, confirmText = '确认', cancelText = '取消' }) {
+        showConfirmationModal({ title, content, onConfirm, confirmText = '', cancelText = '' }) {
             const modal = elements.confirmationModal;
             if (!modal) return;
 
@@ -1852,8 +1865,8 @@ const ui = (() => {
             const confirmBtn = modal.querySelector('.modal-confirm-btn');
             const cancelBtn = modal.querySelector('.modal-close-btn');
             
-                        if(confirmBtn) confirmBtn.textContent = confirmText;
-            if(cancelBtn) cancelBtn.textContent = cancelText;
+            if(confirmBtn && confirmText) confirmBtn.textContent = confirmText;
+            if(cancelBtn && cancelText) cancelBtn.textContent = cancelText;
 
             let confirmHandler, cancelHandler, closeHandler;
 
@@ -1995,6 +2008,7 @@ const ui = (() => {
             const structure = [
                 { id: 'language', legend: i18n.t('settingsModal.language.legend'), tooltip: i18n.t('settingsModal.language.tooltip'), fields: [{ id: 'ui_language', label: i18n.t('settingsModal.language.label'), type: 'select', value: currentSettings.ui_language, options: [{ value: 'zh', text: i18n.t('settingsModal.language.options.zh') }, { value: 'en', text: i18n.t('settingsModal.language.options.en') }] }] },
                 { id: 'sync', legend: i18n.t('settingsModal.sync.legend'), tooltip: i18n.t('settingsModal.sync.tooltip'), fields: [{ id: 'is_background_sync_enabled', label: i18n.t('settingsModal.sync.enableLabel'), type: 'switch', value: currentSettings.is_background_sync_enabled }, { id: 'sync_interval_hours', label: i18n.t('settingsModal.sync.intervalLabel'), type: 'select', value: currentSettings.sync_interval_hours, options: [1, 2, 6, 12, 24, 36, 48], unit: i18n.t('settingsModal.sync.intervalUnit') }] },
+                { id: 'ai_summary', legend: i18n.t('settingsModal.ai.legend'), tooltip: i18n.t('settingsModal.ai.tooltip'), fields: [{ id: 'is_ai_enabled', label: i18n.t('settingsModal.ai.enableLabel'), type: 'switch', value: currentSettings.is_ai_enabled || false }, { id: 'is_auto_analysis_enabled', label: i18n.t('settingsModal.ai.autoLabel'), type: 'switch', value: currentSettings.is_auto_analysis_enabled || false }, { id: 'ai_base_url', label: i18n.t('settingsModal.ai.baseUrlLabel'), type: 'text', value: currentSettings.ai_base_url || '', placeholder: i18n.t('settingsModal.ai.baseUrlPlaceholder') }, { id: 'ai_api_key', label: i18n.t('settingsModal.ai.apiKeyLabel'), type: 'password', value: currentSettings.ai_api_key || '', placeholder: i18n.t('settingsModal.ai.apiKeyPlaceholder') }, { id: 'ai_model', label: i18n.t('settingsModal.ai.modelLabel'), type: 'text', value: currentSettings.ai_model || '', placeholder: i18n.t('settingsModal.ai.modelPlaceholder') }, { id: 'ai_concurrency', label: i18n.t('settingsModal.ai.concurrencyLabel'), type: 'select', value: currentSettings.ai_concurrency || 1, options: [1, 2, 3, 4, 5], unit: i18n.t('settingsModal.ai.concurrencyUnit') }, { id: 'ai_summary_buttons', label: i18n.t('settingsModal.ai.manualLabel'), type: 'button-group', buttons: [{ id: 'summarize_all_button', text: i18n.t('settingsModal.ai.summarizeAll') }, { id: 'summarize_unanalyzed_button', text: i18n.t('settingsModal.ai.summarizeUnanalyzed') }] }] },
                 { id: 'notifications', legend: i18n.t('settingsModal.notifications.legend'), tooltip: i18n.t('settingsModal.notifications.tooltip'), fields: [{ id: 'is_push_enabled', label: i18n.t('settingsModal.notifications.enableLabel'), type: 'switch', value: currentSettings.is_push_enabled }, { id: 'push_channel', label: i18n.t('settingsModal.notifications.channelLabel'), type: 'select', value: currentSettings.push_channel, options: [{value: 'bark', text: 'Bark'}, {value: 'gotify', text: 'Gotify'}, {value: 'serverchan', text: 'ServerChan'}, {value: 'webhook', text: 'WebHook'}], placeholder: i18n.t('settingsModal.notifications.channelPlaceholder') }, { id: 'is_push_proxy_enabled', label: i18n.t('settingsModal.notifications.proxyLabel'), type: 'switch', value: currentSettings.is_push_proxy_enabled }] },
                 { id: 'dnd', legend: i18n.t('settingsModal.dnd.legend'), tooltip: i18n.t('settingsModal.dnd.tooltip'), fields: [{ id: 'is_dnd_enabled', label: i18n.t('settingsModal.dnd.enableLabel'), type: 'switch', value: currentSettings.is_dnd_enabled }, { id: 'dnd_start_hour', label: i18n.t('settingsModal.dnd.startLabel'), type: 'select', value: currentSettings.dnd_start_hour, options: Array.from({ length: 24 }, (_, i) => i), unit: i18n.t('settingsModal.dnd.timeUnit') }, { id: 'dnd_end_hour', label: i18n.t('settingsModal.dnd.endLabel'), type: 'select', value: currentSettings.dnd_end_hour, options: Array.from({ length: 24 }, (_, i) => i), unit: i18n.t('settingsModal.dnd.timeUnit') }] }
             ];
@@ -2013,6 +2027,7 @@ const ui = (() => {
             const syncSwitch = formElement.querySelector('#is_background_sync_enabled');
             const pushSwitch = formElement.querySelector('#is_push_enabled');
             const dndSwitch = formElement.querySelector('#is_dnd_enabled');
+            const aiSwitch = formElement.querySelector('#is_ai_enabled');
 
             const syncIntervalSelect = formElement.querySelector('#sync_interval_hours');
             const pushChannelSelect = formElement.querySelector('#push_channel');
@@ -2021,8 +2036,17 @@ const ui = (() => {
             const dndStartSelect = formElement.querySelector('#dnd_start_hour');
             const dndEndSelect = formElement.querySelector('#dnd_end_hour');
 
+            const autoAnalysisSwitch = formElement.querySelector('#is_auto_analysis_enabled');
+            const aiBaseUrlInput = formElement.querySelector('#ai_base_url');
+            const aiApiKeyInput = formElement.querySelector('#ai_api_key');
+            const aiModelInput = formElement.querySelector('#ai_model');
+            const aiConcurrencySelect = formElement.querySelector('#ai_concurrency');
+            const summarizeAllButton = formElement.querySelector('#summarize_all_button');
+            const summarizeUnanalyzedButton = formElement.querySelector('#summarize_unanalyzed_button');
+
             const updateFormState = () => {
                 const isSyncEnabled = syncSwitch.checked;
+                const isAiEnabled = aiSwitch.checked;
 
                 // 规则 1 & 2: 级联关闭开关
                 // 如果同步被关闭，则强制关闭其所有子开关
@@ -2037,6 +2061,11 @@ const ui = (() => {
                 }
                 const isDndEnabled = dndSwitch.checked; // 重新获取DND开关的最终状态
 
+                // AI 设置的级联逻辑
+                if (!isAiEnabled) {
+                    autoAnalysisSwitch.checked = false;
+                }
+
                 // 规则 3: 根据最终的开关状态，设置所有控件的可用性
                 // a. 同步设置的子项
                 syncIntervalSelect.disabled = !isSyncEnabled;
@@ -2049,17 +2078,43 @@ const ui = (() => {
                 channelConfigContainer.querySelectorAll('input, select, textarea').forEach(el => {
                     el.disabled = pushSubItemsDisabled;
                 });
-                
+
                 // c. DND设置的总开关和子项
                 dndSwitch.disabled = !isSyncEnabled || !isPushEnabled;
                 dndStartSelect.disabled = !isSyncEnabled || !isPushEnabled || !isDndEnabled;
                 dndEndSelect.disabled = !isSyncEnabled || !isPushEnabled || !isDndEnabled;
+
+                // d. AI 设置的子项
+                if (autoAnalysisSwitch) autoAnalysisSwitch.disabled = !isAiEnabled;
+                if (aiBaseUrlInput) aiBaseUrlInput.disabled = !isAiEnabled;
+                if (aiApiKeyInput) aiApiKeyInput.disabled = !isAiEnabled;
+                if (aiModelInput) aiModelInput.disabled = !isAiEnabled;
+                if (aiConcurrencySelect) aiConcurrencySelect.disabled = !isAiEnabled;
+                if (summarizeAllButton) summarizeAllButton.disabled = !isAiEnabled;
+                if (summarizeUnanalyzedButton) summarizeUnanalyzedButton.disabled = !isAiEnabled;
             };
 
             // 绑定事件监听器
             syncSwitch.addEventListener('change', updateFormState);
             pushSwitch.addEventListener('change', updateFormState);
             dndSwitch.addEventListener('change', updateFormState);
+            aiSwitch.addEventListener('change', updateFormState);
+
+            // 绑定 AI 总结按钮事件
+            if (summarizeAllButton) {
+                summarizeAllButton.addEventListener('click', () => {
+                    if (typeof app !== 'undefined' && app.handleSummarizeAll) {
+                        app.handleSummarizeAll();
+                    }
+                });
+            }
+            if (summarizeUnanalyzedButton) {
+                summarizeUnanalyzedButton.addEventListener('click', () => {
+                    if (typeof app !== 'undefined' && app.handleSummarizeUnanalyzed) {
+                        app.handleSummarizeUnanalyzed();
+                    }
+                });
+            }
 
             const settingsViewClickHandler = (e) => {
                 if (e.target.matches('.close-settings') || e.target.closest('.close-settings')) {
