@@ -4,6 +4,7 @@
 - AppSettings: 对应数据库中的 'appsettings' 表，用于存储应用的各项配置。
 """
 from typing import Optional, List, Dict, Any
+from datetime import datetime
 from sqlmodel import Field, SQLModel, JSON, Column, String
 
 class Repo(SQLModel, table=True):
@@ -37,9 +38,29 @@ class Repo(SQLModel, table=True):
         description="用户的详细备注 (支持 Markdown)"
     )
     tags: List[str] = Field(
-        default_factory=list, 
-        sa_column=Column(JSON), 
+        default_factory=list,
+        sa_column=Column(JSON),
         description="用户为此仓库打的标签列表"
+    )
+
+    # --- AI 总结相关 ---
+    ai_summary: Optional[str] = Field(
+        default=None,
+        max_length=400,
+        description="AI 生成的仓库总结（不超过 200 个中文字符）"
+    )
+    analyzed_at: Optional[datetime] = Field(
+        default=None,
+        description="AI 分析时间戳"
+    )
+    analysis_failed: Optional[bool] = Field(
+        default=False,
+        description="AI 分析是否失败"
+    )
+    readme_sha: Optional[str] = Field(
+        default=None,
+        max_length=40,
+        description="README 文件的 SHA 值（用于检测变化）"
     )
 
 class AppSettings(SQLModel, table=True):
@@ -70,7 +91,35 @@ class AppSettings(SQLModel, table=True):
     tags_order: List[str] = Field(default_factory=list, sa_column=Column(JSON), description="用户自定义的标签/分组排序")
     languages_order: List[str] = Field(default_factory=list, sa_column=Column(JSON), description="用户自定义的语言排序")
     ui_language: str = Field(
-        default="zh", 
-        max_length=10, 
+        default="zh",
+        max_length=10,
         description="用户选择的界面语言"
+    )
+
+    # --- AI 总结相关 ---
+    is_ai_enabled: bool = Field(
+        default=False,
+        description="是否启用 AI 总结功能"
+    )
+    is_auto_analysis_enabled: bool = Field(
+        default=False,
+        description="是否开启自动总结（检测 README 变化）"
+    )
+    ai_base_url: Optional[str] = Field(
+        default=None,
+        description="AI API 基础 URL"
+    )
+    ai_api_key: Optional[str] = Field(
+        default=None,
+        description="AI API 密钥（加密存储）"
+    )
+    ai_model: Optional[str] = Field(
+        default=None,
+        description="AI 模型名称"
+    )
+    ai_concurrency: int = Field(
+        default=1,
+        ge=1,
+        le=5,
+        description="AI 分析并发数（1-5）"
     )
