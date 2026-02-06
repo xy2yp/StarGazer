@@ -15,7 +15,7 @@ from app.config import settings
 from app.version import __version__ as APP_VERSION
 from posthog import Posthog
 
-from app.api import auth, users, stars, settings as api_settings, tags as api_tags, version as api_version
+from app.api import auth, users, stars, settings as api_settings, tags as api_tags, version as api_version, summary as api_summary
 from app.db import create_db_and_tables
 from app.core.scheduler import periodic_sync_scheduler
 
@@ -153,6 +153,7 @@ app.include_router(stars.router)  # 挂载 star 仓库相关的路由
 app.include_router(api_settings.router) # 挂载 settings 相关的路由
 app.include_router(api_tags.router) # 挂载自定义标签的相关路由
 app.include_router(api_version.router) # 挂载版本检查相关的路由
+app.include_router(api_summary.router) # 挂载 AI 总结相关的路由
 
 # --- 静态文件 ---
 # 挂载前端静态文件，实现单页应用 (SPA) 托管
