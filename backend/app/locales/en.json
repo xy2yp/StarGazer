@@ -1,7 +1,24 @@
 {
   "notification": {
-    "title": "[StarGazer] Gravitational waves detected from the '{repo_name}' constellation 📡",
-    "content": "🧑‍🚀 Attention, Chief Stargazer:\n\nA new energy pulse has been captured by our deep space probe in the **{repo_full_name}** quadrant! 💥\n\n⚡ **[Signal Analysis]**\n- ⏱️ **Pulse Time:** {pushed_at}\n- ✨ **Gravity Reading:** {stargazers_count} ⭐\n- 📝 **Celestial Snapshot:** {repo_description}\n\n🔭 The signal source is clear. A close-range observation is highly recommended.\n\n🚀 [Wormhole initiated. Engaging jump to source.]({repo_html_url}/commits)"
+    "repo_update": {
+      "title": "🌌 StarGazer {repo_name} Updated",
+      "commits_header": "📝 Recent Updates",
+      "fallback_header": "📝 About",
+      "repo_link": "Repository",
+      "content": "{commits_section}\n\n✨ {stargazers_count}  ⏱️ {pushed_at}\n🔗 [{repo_link}]({repo_html_url})"
+    },
+    "ai_error": {
+      "title": "🌌 StarGazer AI Analysis Error",
+      "content": "⚠️ {reason}\n\n{suggestion}",
+      "config_missing_reason": "AI configuration is incomplete",
+      "config_missing_suggestion": "Please complete AI settings",
+      "github_token_missing_reason": "GitHub Access Token not configured",
+      "github_token_missing_suggestion": "Please configure Token in Settings",
+      "api_key_invalid_reason": "AI API Key is invalid",
+      "api_key_invalid_suggestion": "Please check API Key in Settings",
+      "github_token_invalid_reason": "GitHub Access Token has expired",
+      "github_token_invalid_suggestion": "Please re-authorize"
+    }
   },
   "ai_summary_prompt": "You are a professional GitHub repository analyst. Analyze the repository and provide a concise, accurate, search-friendly summary in English.\n\nAnalyze this GitHub repository and provide a concise English summary.\n\nRequirements:\n1. No more than 400 English characters\n2. Describe the main purpose, core features, and technical highlights\n3. Use plain language, avoid overly technical jargon\n4. Include keywords and core concepts suitable for search matching\n5. Return the summary text directly, no JSON or other wrapping\n\nRepository: {full_name}\n\nREADME content (first 2000 characters):\n{readme_content}\n\nReturn the summary text directly."
 }
