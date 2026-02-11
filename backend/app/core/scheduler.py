@@ -76,22 +76,26 @@ async def _perform_sync_and_notify_actions(session: Session) -> AppSettings:
 
         # 2. 检查是否需要发送通知
         if app_settings.is_push_enabled and updated_repos:
-            # V24.05.20 根据用户需求，仅推送被标记为“特别关注”的仓库
+            # V24.05.20 根据用户需求，仅推送被标记为"特别关注"的仓库
             favorite_repos_to_notify = [
                 repo for repo in updated_repos if repo.tags and "_favorite" in repo.tags
             ]
-            
+
             if favorite_repos_to_notify:
                 logger.info(f"Found {len(favorite_repos_to_notify)} updated 'Favorite' repos to notify.")
                 notifier = create_notifier(session, app_settings)
-                
+
                 if notifier:
-                    # 并发发送所有通知
+                    old_pushed_at_map = stats.get("old_pushed_at_map", {})
+                    # 先异步生成所有消息，再并发发送
                     notification_tasks = []
                     for repo in favorite_repos_to_notify:
-                        title, content = create_notification_message(
-                            repo, 
-                            lang=app_settings.ui_language
+                        old_pushed_at = old_pushed_at_map.get(repo.id)
+                        title, content = await create_notification_message(
+                            repo,
+                            lang=app_settings.ui_language,
+                            github_token=access_token,
+                            old_pushed_at=old_pushed_at,
                         )
                         notification_tasks.append(notifier.send(title, content))
                     results = await asyncio.gather(*notification_tasks, return_exceptions=True)
