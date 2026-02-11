@@ -21,7 +21,7 @@ LAST_SUCCESSFUL_SYNC_AT: Optional[datetime] = None
 def _diff_and_prepare_operations(
     github_repos_data: List[Dict],
     db_repos: List[Repo]
-) -> Tuple[List[Dict], List[Repo], List[int], List[Repo], List[int]]:
+) -> Tuple[List[Dict], List[Repo], List[int], List[Repo], List[int], Dict[int, Optional[str]]]:
     """
     比对 GitHub 数据和本地数据，生成数据库操作指令。
     参数:
@@ -34,6 +34,7 @@ def _diff_and_prepare_operations(
         - to_remove_ids (List[int]): 需要删除的仓库 ID 列表。
         - substantive_updated_repos (List[Repo]): 发生了实质性更新的仓库对象列表，用于发送通知。
         - pushed_at_changed_ids (List[int]): pushed_at 变化的仓库 ID 列表，用于 AI 总结。
+        - old_pushed_at_map (Dict[int, Optional[str]]): 仓库 ID 到旧 pushed_at 值的映射，用于获取 commit 列表。
     """
     logger.info("Starting diff calculation...")
 
@@ -56,6 +57,7 @@ def _diff_and_prepare_operations(
     to_update: List[Repo] = []
     substantive_updated_repos: List[Repo] = []
     pushed_at_changed_ids: List[int] = []  # 记录 pushed_at 变化的仓库 ID
+    old_pushed_at_map: Dict[int, Optional[str]] = {}  # 保存旧 pushed_at 值，用于获取 commit 列表
 
     # 定义"实质性更新"字段，这些字段的变化会触发通知
     substantive_fields = ['name', 'full_name', 'description', 'language', 'html_url', 'pushed_at']
@@ -71,6 +73,9 @@ def _diff_and_prepare_operations(
         # 检查实质性字段是否有变化
         for field in substantive_fields:
             if getattr(db_repo, field) != github_repo.get(field):
+                # 在覆写前保存旧 pushed_at 值
+                if field == 'pushed_at':
+                    old_pushed_at_map[repo_id] = getattr(db_repo, field)
                 setattr(db_repo, field, github_repo.get(field))
                 has_substantive_update = True
 
@@ -104,9 +109,9 @@ def _diff_and_prepare_operations(
         f"Pushed_at changed: {len(pushed_at_changed_ids)}"
     )
 
-    return to_add, to_update, to_remove_ids, substantive_updated_repos, pushed_at_changed_ids
+    return to_add, to_update, to_remove_ids, substantive_updated_repos, pushed_at_changed_ids, old_pushed_at_map
 
-async def run_full_sync(session: Session, access_token: str) -> Tuple[Dict[str, int], List[Repo]]:
+async def run_full_sync(session: Session, access_token: str) -> Tuple[Dict, List[Repo]]:
     """
     执行一次完整的从 GitHub 到本地数据库的数据同步。
     参数:
@@ -130,7 +135,7 @@ async def run_full_sync(session: Session, access_token: str) -> Tuple[Dict[str, 
         db_repos = session.exec(select(Repo)).all()
 
         # 3. 执行核心比对算法，获取操作指令和待通知列表
-        to_add, to_update, to_remove_ids, updated_repos_for_notification, pushed_at_changed_ids = _diff_and_prepare_operations(
+        to_add, to_update, to_remove_ids, updated_repos_for_notification, pushed_at_changed_ids, old_pushed_at_map = _diff_and_prepare_operations(
             github_repos_data=github_repos_data,
             db_repos=db_repos
         )
@@ -152,7 +157,8 @@ async def run_full_sync(session: Session, access_token: str) -> Tuple[Dict[str, 
             "updated": len(updated_repos_for_notification),
             "removed": len(to_remove_ids),
             "total_from_github": len(github_repos_data),
-            "updated_repo_ids": pushed_at_changed_ids  # 新增：pushed_at 变化的仓库 ID
+            "updated_repo_ids": pushed_at_changed_ids,
+            "old_pushed_at_map": old_pushed_at_map,
         }
         
         # 6. 更新内存中的成功同步时间戳
