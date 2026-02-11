@@ -11,6 +11,7 @@ from app.models import Repo, AppSettings
 from app.core.ai_service import AIService
 from app.core.readme_service import get_readme_content
 from app.core.notifiers.factory import create_notifier
+from app.core.notifiers.message import create_ai_error_message
 from app.core.security import decrypt_data
 from app.exceptions import (
     InvalidApiKeyError, ApiEndpointError, NetworkTimeoutError,
@@ -134,7 +135,8 @@ async def summarize_repos_batch(
         with Session(engine) as session:
             notifier = create_notifier(session, settings)
             if notifier:
-                await notifier.send("AI 总结失败", "AI 配置缺失，请完善设置")
+                title, content = create_ai_error_message("config_missing", lang=settings.ui_language)
+                await notifier.send(title, content)
         raise Exception("AI 配置缺失")
 
     if not settings.github_access_token:
@@ -143,7 +145,8 @@ async def summarize_repos_batch(
         with Session(engine) as session:
             notifier = create_notifier(session, settings)
             if notifier:
-                await notifier.send("AI 总结失败", "GitHub Access Token 未配置")
+                title, content = create_ai_error_message("github_token_missing", lang=settings.ui_language)
+                await notifier.send(title, content)
         raise Exception("GitHub Access Token 未配置")
 
     # 解密敏感字段（数据库中以加密形式存储）
@@ -296,7 +299,8 @@ async def summarize_single_repo(
         with Session(engine) as session:
             notifier = create_notifier(session, settings)
             if notifier:
-                await notifier.send("AI 总结失败", "AI API 密钥无效，请检查配置")
+                title, content = create_ai_error_message("api_key_invalid", lang=settings.ui_language)
+                await notifier.send(title, content)
         raise
 
     except (ApiEndpointError, NetworkTimeoutError) as e:
@@ -329,7 +333,8 @@ async def summarize_single_repo(
         with Session(engine) as session:
             notifier = create_notifier(session, settings)
             if notifier:
-                await notifier.send("AI 总结失败", "GitHub Access Token 无效或过期，请检查配置")
+                title, content = create_ai_error_message("github_token_invalid", lang=settings.ui_language)
+                await notifier.send(title, content)
         raise
 
     except GitHubApiError as e:
