@@ -1,7 +1,24 @@
 {
   "notification": {
-    "title": "【StarGazer 星眸】观测到来自 {repo_name} 星座的引力波 📡",
-    "content": "🧑‍🚀 首席观星者：\n\n我们部署在 **{repo_full_name}** 象限的深空探测器刚刚捕获到一次新的能量脉冲！💥\n\n⚡ **[信号分析]**\n- ⏱️ **脉冲时间：** {pushed_at}\n- ✨ **引力读数：** {stargazers_count} ⭐\n- 📝 **星体快照：** {repo_description}\n\n🔭 信号源非常清晰，建议您亲自进行一次近距离观测！\n\n🚀 [建立临时虫洞，跃迁至信号源]({repo_html_url}/commits)"
+    "repo_update": {
+      "title": "🌌 StarGazer {repo_name} 有更新",
+      "commits_header": "📝 最新更新",
+      "fallback_header": "📝 项目简介",
+      "repo_link": "仓库地址",
+      "content": "{commits_section}\n\n✨ {stargazers_count}  ⏱️ {pushed_at}\n🔗 [{repo_link}]({repo_html_url})"
+    },
+    "ai_error": {
+      "title": "🌌 StarGazer AI 分析异常",
+      "content": "⚠️ {reason}\n\n{suggestion}",
+      "config_missing_reason": "AI 配置不完整",
+      "config_missing_suggestion": "请前往设置完善 AI 配置",
+      "github_token_missing_reason": "GitHub Access Token 未配置",
+      "github_token_missing_suggestion": "请前往设置配置 Token",
+      "api_key_invalid_reason": "AI API 密钥无效",
+      "api_key_invalid_suggestion": "请前往设置检查 API 密钥",
+      "github_token_invalid_reason": "GitHub Access Token 已失效",
+      "github_token_invalid_suggestion": "请重新授权登录"
+    }
   },
   "ai_summary_prompt": "你是一个专业的 GitHub 仓库分析助手。请用简体中文分析仓库，提供简洁、准确、易于搜索的总结。\n\n请分析这个 GitHub 仓库并提供一个简洁的中文总结。\n\n总结要求：\n1. 不超过 200 个中文字符\n2. 说明仓库的主要功能、核心特性和技术亮点\n3. 使用通俗易懂的语言，避免过于技术化的术语\n4. 适合用于搜索匹配，包含关键词和核心概念\n5. 直接返回总结文本，不需要 JSON 格式或其他包装\n\n仓库名称：{full_name}\n\nREADME 内容（前 2000 字符）：\n{readme_content}\n\n请直接返回总结文本。"
 }
