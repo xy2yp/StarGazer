@@ -6,10 +6,11 @@
 import json
 import logging
 from pathlib import Path
-from typing import Tuple, Dict, Any
+from typing import Tuple, Dict, Any, Optional
 from datetime import datetime
 
 from app.models import Repo
+from app.core.github import GitHubApiClient
 
 logger = logging.getLogger(__name__)
 
@@ -27,10 +28,10 @@ def _load_templates():
     if not _LOCALES_PATH.is_dir():
         logger.warning(f"Locales directory not found at: {_LOCALES_PATH}")
         return
-        
+
     logger.info(f"Loading notification templates from: {_LOCALES_PATH}")
     for lang_file in _LOCALES_PATH.glob("*.json"):
-        lang_code = lang_file.stem  
+        lang_code = lang_file.stem
         try:
             with open(lang_file, "r", encoding="utf-8") as f:
                 _TEMPLATES_CACHE[lang_code] = json.load(f)
@@ -42,55 +43,109 @@ def _load_templates():
 _load_templates()
 
 
-def create_notification_message(repo: Repo, lang: str = "en") -> Tuple[str, str]:
-    """
-    根据指定语言，为更新的仓库生成本地化的通知消息。
-    参数:
-        repo: 发生了实质性更新的 Repo 对象。
-        lang: 目标语言代码 (例如 'zh', 'en')。
-    返回:
-        一个元组 (title, content)，包含了最终的通知标题和内容。
-    """
-    
-    # 将仓库的 pushed_at UTC 时间转换为本地时间并格式化
+def _get_notification_templates(lang: str) -> Dict[str, Any]:
+    """获取指定语言的 notification 模板，回退到中文。"""
+    lang_templates = _TEMPLATES_CACHE.get(lang, _TEMPLATES_CACHE.get("zh", {}))
+    return lang_templates.get("notification", {})
+
+
+def _format_pushed_at(pushed_at_str: Optional[str]) -> str:
+    """将 pushed_at UTC 时间转换为本地时间并格式化。"""
     try:
-        pushed_at_str = repo.pushed_at
-        # 兼容 ISO 8601 格式，包括带 'Z' 和不带 'Z' 的情况
         if pushed_at_str and pushed_at_str.endswith('Z'):
             pushed_at_utc = datetime.fromisoformat(pushed_at_str[:-1] + '+00:00')
         else:
             pushed_at_utc = datetime.fromisoformat(pushed_at_str)
-
-        pushed_at_local = pushed_at_utc.astimezone() # 转换为当前系统的本地时区
-        formatted_pushed_at = pushed_at_local.strftime('%Y-%m-%d %H:%M:%S %Z')
+        pushed_at_local = pushed_at_utc.astimezone()
+        return pushed_at_local.strftime('%Y-%m-%d %H:%M')
     except (ValueError, TypeError, AttributeError):
-        # 如果解析失败，则使用原始字符串或 "N/A" 作为备用
-        formatted_pushed_at = repo.pushed_at or "N/A"
+        return pushed_at_str or "N/A"
 
-    # 准备用于模板替换的变量字典
-    replacements = {
-        "repo_name": repo.name,
-        "repo_full_name": repo.full_name,
-        "repo_description": repo.description or "N/A", # 提供备用值
-        "stargazers_count": repo.stargazers_count,
-        "pushed_at": formatted_pushed_at,
-        "repo_html_url": repo.html_url,
-    }
-    
-    # --- 模板选择与填充 ---
-    # 1. 从缓存中获取对应语言的模板。如果指定语言不存在，则回退到中文 ('zh')
-    # 2. 如果连 'zh' 都不存在，则回退到一个空字典，以防止程序崩溃
-    lang_templates = _TEMPLATES_CACHE.get(lang, _TEMPLATES_CACHE.get("zh", {}))
-    
-    # 3. 从语言模板中获取 'notification' 部分
-    notification_templates = lang_templates.get("notification", {})
 
-    # 4. 获取标题和内容模板，并提供硬编码的备用值，以确保函数总能返回有效的字符串
-    title_template = notification_templates.get("title", "Update for {repo_name}")
-    content_template = notification_templates.get("content", "A repository you starred has been updated.")
+async def create_notification_message(
+    repo: Repo, lang: str = "en",
+    github_token: Optional[str] = None,
+    old_pushed_at: Optional[str] = None
+) -> Tuple[str, str]:
+    """
+    根据指定语言，为更新的仓库生成本地化的通知消息。
+    如果提供了 old_pushed_at 和 github_token，会尝试获取 commit 列表；
+    获取失败时回退到仓库 description。
 
-    # 5. 使用 format 方法填充模板
-    title = title_template.format(**replacements)
-    content = content_template.format(**replacements)
+    参数:
+        repo: 发生了实质性更新的 Repo 对象。
+        lang: 目标语言代码 (例如 'zh', 'en')。
+        github_token: GitHub access token，用于获取 commit 列表。
+        old_pushed_at: 旧的 pushed_at 值，用于确定 commit 查询起点。
+    返回:
+        一个元组 (title, content)，包含了最终的通知标题和内容。
+    """
+    notification_templates = _get_notification_templates(lang)
+    repo_update = notification_templates.get("repo_update", {})
+
+    # 构建 commits_section
+    commits_section = ""
+    if old_pushed_at and github_token:
+        github_client = GitHubApiClient(token=github_token)
+        try:
+            commits = await github_client.get_recent_commits(repo.full_name, since=old_pushed_at)
+        finally:
+            await github_client.client.aclose()
+
+        if commits:
+            header = repo_update.get("commits_header", "📝 Recent Updates")
+            commit_lines = "\n".join(f"• {msg}" for msg in commits)
+            commits_section = f"{header}\n\n{commit_lines}"
+
+    # 获取失败或无 old_pushed_at 时回退到 description
+    if not commits_section:
+        header = repo_update.get("fallback_header", "📝 About")
+        description = repo.description or "N/A"
+        commits_section = f"{header}\n\n{description}"
+
+    formatted_pushed_at = _format_pushed_at(repo.pushed_at)
+    repo_link_text = repo_update.get("repo_link", "Repository")
+
+    # 填充标题模板
+    title_template = repo_update.get("title", "🌌 StarGazer {repo_name} Updated")
+    title = title_template.format(repo_name=repo.name)
+
+    # 填充内容模板
+    content_template = repo_update.get(
+        "content",
+        "{commits_section}\n\n✨ {stargazers_count}  ⏱️ {pushed_at}\n🔗 [{repo_link}]({repo_html_url})"
+    )
+    content = content_template.format(
+        commits_section=commits_section,
+        stargazers_count=repo.stargazers_count,
+        pushed_at=formatted_pushed_at,
+        repo_link=repo_link_text,
+        repo_html_url=repo.html_url,
+    )
+
+    return title, content
+
+
+def create_ai_error_message(error_type: str, lang: str = "en") -> Tuple[str, str]:
+    """
+    根据错误类型和语言生成 AI 分析异常通知消息。
+
+    参数:
+        error_type: 错误类型枚举值，支持:
+            config_missing / github_token_missing / api_key_invalid / github_token_invalid
+        lang: 目标语言代码 (例如 'zh', 'en')。
+    返回:
+        一个元组 (title, content)，包含通知标题和内容。
+    """
+    notification_templates = _get_notification_templates(lang)
+    ai_error = notification_templates.get("ai_error", {})
+
+    title = ai_error.get("title", "🌌 StarGazer AI Analysis Error")
+
+    reason = ai_error.get(f"{error_type}_reason", error_type)
+    suggestion = ai_error.get(f"{error_type}_suggestion", "")
+
+    content_template = ai_error.get("content", "⚠️ {reason}\n\n{suggestion}")
+    content = content_template.format(reason=reason, suggestion=suggestion)
 
     return title, content
