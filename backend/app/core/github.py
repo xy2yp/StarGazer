@@ -7,7 +7,7 @@ import httpx
 import asyncio
 import re
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import backoff
 
 from app.config import settings
@@ -184,8 +184,40 @@ class GitHubApiClient:
             if isinstance(e, ApiException):
                 raise e
             raise ApiException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                code="GITHUB_SYNC_FAILED", 
-                message_zh="同步 GitHub 数据时发生未知错误", 
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                code="GITHUB_SYNC_FAILED",
+                message_zh="同步 GitHub 数据时发生未知错误",
                 message_en="An unknown error occurred during GitHub sync"
             )
+
+    async def get_recent_commits(self, full_name: str, since: Optional[str] = None) -> List[str]:
+        """
+        获取仓库自指定时间以来的 commit message 列表。
+        参数:
+            full_name: 仓库全名（owner/repo）。
+            since: ISO 8601 格式的时间字符串，获取此时间之后的 commit。
+        返回:
+            每条 commit message 第一行的列表。异常时返回空列表。
+        """
+        try:
+            params: Dict[str, Any] = {"per_page": 100}
+            if since:
+                params["since"] = since
+            # 覆盖 Accept 头，commits API 使用默认 JSON 格式
+            headers = {"Accept": "application/vnd.github+json"}
+            response = await self._request(
+                "GET", f"/repos/{full_name}/commits",
+                params=params, headers=headers
+            )
+            commits_data = response.json()
+            messages = []
+            for commit in commits_data:
+                message = commit.get("commit", {}).get("message", "")
+                # 只取 message 第一行
+                first_line = message.split("\n", 1)[0].strip()
+                if first_line:
+                    messages.append(first_line)
+            return messages
+        except Exception as e:
+            logger.warning(f"获取 {full_name} 的 commit 列表失败：{e}")
+            return []
