@@ -11,6 +11,16 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 
+def _normalize_markdown_linebreaks(content: str) -> str:
+    """
+    将普通换行转换为 Markdown 硬换行，确保 Gotify 客户端按预期换行显示。
+    """
+    normalized = content.replace("\r\n", "\n")
+    lines = normalized.split("\n")
+    # 非空行追加两个空格触发 Markdown hard break，空行保持为空行
+    return "\n".join(f"{line}  " if line else "" for line in lines)
+
+
 class GotifyNotifier(Notifier):
     """
     Gotify 推送通知器。
@@ -31,11 +41,13 @@ class GotifyNotifier(Notifier):
         if not base_url or not token:
             logger.error(f"[{self.channel_name}] Gotify URL or Token is not configured.")
             return False
-            
+
+        markdown_content = _normalize_markdown_linebreaks(content)
+
         url = f"{base_url}/message?token={token}"
         payload = {
             "title": title,
-            "message": content,
+            "message": markdown_content,
             "priority": priority,
             "extras": {
                 "client::display": {
